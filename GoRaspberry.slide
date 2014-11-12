@@ -1,0 +1,418 @@
+Go Raspberry Pi
+
+2014/11/12
+Esteve Farrés Berenguer
+Baby Gopher, for the moment.
+
+R&D Manager, Ubikwa Systems SLU
+http://ubikwa.com
+efarres@ubikwa.com
+
+https://plus.google.com/u/0/+EsteveFarresBerenguer
+esteve.farres@gmail.com
+@estfarr
+
+* Ready?
+.image image/gopherswim.jpg _ 200
+.image image/Raspberry_Pi_Logo.png
+.image image/Raspberry_Pi_B+_top.jpg 
+
+* What is Go?
+
+A new programming language. (First release in November 2009, 1.0 in March 2012.)
+
+In a nutshell:
+
+- A simple language that is easy to learn and read.
+- Statically typed, but with a dynamic feel.
+- Compiled to native machine code, but has a fast development cycle.
+- Language-level concurrency features.
+- Expansive "batteries included" standard library.
+- Great tools.
+- Open source.
+
+
+* What is Go used for?
+
+Go is a general-purpose programming language, like Python, Java, or C.
+
+Some common uses:
+
+- Server daemons
+- Command-line tools
+- Web applications
+- Games
+- Scientific computing
+- High frequency trading
+
+And, of course, there are many more.
+
+* Go and me
+
+I start learning Go in 02/2013 (Go 1.1 2013/05/03). 
+
+Initial description
+
+	"Go a systems programming language expressive, concurrent, garbage-collected."
+
+I'm PhD. in Physics, and electronic. I develop scientific instrumentation. 
+I'm not a software engineer, but as I have been involved also in several software projects. My first computer was a Commodore VIC-20 computer 16K RAM Cartridge.
+
+.image image/CBMVIC20P8.jpg _ 200
+
+I'm writing code for data processing and analysis.
+
+
+* a bit more
+I'm interested in concurrency and Communicating Sequential Processes (CSP described 1978).
+Hardware description language VHDL, also in other native concurrent languages as Occam (1983), or Ada (1980, implementation 1983).
+
+Python had been my language for data manipulation and exploration (SciPy, Pylab).
+
+Some unreasonable phobia to C, and derivatives as Verilog.
+
+My current personal challenge is break the gap between hard and soft domains.
+
+Go and VHDL are my day-to-day languages.
+
+* Go is 
+
+Multiplatform, nice to see the code running in different platforms:
+
+- x86 (32/64bit), ARM (32bit) 
+- Windows, Linux, BSD, OS X, ...
+
+NO dependences.
+
+Compiled 
+
+Statically typed language.
+
+* Concurrency
+Language feature (related with [[https://en.wikipedia.org/wiki/Tony_Hoare][Hoare's]] CSP 1978).
+[[http://golang.org/doc/effective_go.html#goroutines][Goroutines]] (Execution).
+[[http://golang.org/doc/effective_go.html#channels][Channels]] (Communication and synchronization).
+
+[[http://golang.org/doc/effective_go.html#interfaces][Interfaces]] (Polymorphism).
+
+[[http://talks.golang.org/2012/waza.slide#1][Concurrency is not Parallelism]]
+[[http://talks.golang.org/2012/concurrency.slide#1][Go Concurrency Patterns]]
+[[http://talks.golang.org/2013/advconc.slide#1][Advanced Go Concurrency Patterns]]
+
+
+* Integrated Tools
+Formatting of source code.
+
+	gofmt
+
+Code documentation:
+
+	godoc
+
+Download and install packages:
+
+	go get
+
+* Integrated Tools
+Compile and link packages:
+
+	go build
+
+Compile and run program:
+
+	go run
+
+Test, profiling, and performance:
+
+	go test
+
+[[http://golang.org/cmd/go/][Command go]]
+[[https://golang.org/doc/cmd][Command Documentation]]
+
+* Ubikwa Systems
+.image image/LogoUbikwaBN.png _ 150
+Ubiquitous Computing - Internet of Things
+
+Ubikwa Systems is an start-up company located at the Technological and Scientific Park of the University of Girona.
+
+	"Our principal market and focus of interest is precision farming."
+
+Others Smart Cities and Unnamed Aerial Vehicles.
+
+* Building Instruments and Services
+We need:
+
+- Efficiency
+- Safety
+- Concurrency
+- Scalability
+- Fast development cycle
+
+
+* Is possible build an embedded system with Go?
+
+- Is possible manage bus interfaces? 
+	SPI, I2C, I2S, UART common sensor interfaces
+- Is possible take profit of the hardware features?
+	Speed, power budget.
+- Is possible re-use C libraries?
+	C/C++ Bridges
+- Is possible run in an embedded system?
+	Raspberry Pi as fast prototyping
+
+* Is possible build an embedded system with Go?
+
+- Is possible manage communications?
+	WiFi, Ethernet, UART
+- Is possible deploy web services?
+	native net/http package
+- Is possible build RESTfull APIs?
+	go-json-rest package
+	
+* cgo - C "Pseudo-package"
+Cgo lets Go packages call C code.
+Go and C files that can be combined into a single Go package.
+[[http://blog.golang.org/c-go-cgo][C? Go? Cgo!]]
+
+.code random/random.go
+
+
+* Raspberry Pi
+
+* Raspberry Pi
+The Raspberry Pi is based on the Broadcom BCM2835 system on a chip (SoC):
+
+- CPU: ARM1176JZF-S (ARMv6 instruction set) @700 MHz 
+- GPU: Broadcom VideoCore IV GPU @250MHz
+
+Installing Go:
+[[http://dave.cheney.net/unofficial-arm-tarballs][Dave Cheney - Unofficial ARM tarballs for Go]]
+
+	Raspberry Pi (ARMv6 Multiarch) Debian based system (Raspbian).
+
+Useful Tools:
+
+- [[http://elinux.org/RPi_Guides][RPi Guides ]]
+- [[http://www.raspberry-projects.com/pi/programming-in-c/getting-your-raspberry-pi-ready-for-c-programming][Getting Your RPi Ready For C Programming]]
+
+* Taking hardware control - BCM2835
+Great C library, very well documented. 
+[[http://www.airspayce.com/mikem/bcm2835]]
+
+	// bcm2835.h
+	//
+	// C and C++ support for Broadcom BCM 2835 as used in Raspberry Pi
+	//
+	// Author: Mike McCauley
+
+It provides access to GPIO and other IO functions on the Broadcom BCM 2835 chip.
+It provides functions for reading digital inputs and setting digital outputs, using SPI and I2C, and for accessing the system timers.
+Pin event detection is supported by polling (interrupts are not supported).
+
+* BCM2835 bridge constants
+
+bcm2835.h
+
+	/// \brief SPI Data mode
+	/// Specify the SPI data mode to be passed to bcm2835_spi_setDataMode()
+	typedef enum
+	{
+		BCM2835_SPI_MODE0 = 0,  ///< CPOL = 0, CPHA = 0
+		BCM2835_SPI_MODE1 = 1,  ///< CPOL = 0, CPHA = 1
+		BCM2835_SPI_MODE2 = 2,  ///< CPOL = 1, CPHA = 0
+		BCM2835_SPI_MODE3 = 3,  ///< CPOL = 1, CPHA = 1
+	}bcm2835SPIMode;
+
+bcm2835.go	
+	
+	/// \brief SPI Data mode
+	/// Specify the SPI data mode to be passed to bcm2835_spi_setDataMode()
+	const BCM2835_SPI_MODE0 = uint8(0) ///< CPOL = 0, CPHA = 0
+	const BCM2835_SPI_MODE1 = uint8(1) ///< CPOL = 0, CPHA = 1
+	const BCM2835_SPI_MODE2 = uint8(2) ///< CPOL = 1, CPHA = 0
+	const BCM2835_SPI_MODE3 = uint8(3) ///< CPOL = 1, CPHA = 1	
+
+* BCM2835 bridge functions
+
+bcm2835.h
+
+    /// Initialise the library by opening /dev/mem and getting pointers to the 
+    /// internal memory for BCM 2835 device registers. You must call this (successfully)
+    /// before calling any other 
+    /// functions in this library (except bcm2835_set_debug). 
+    /// If bcm2835_init() fails by returning 0, 
+    /// calling any other function may result in crashes or other failures.
+    /// Prints messages to stderr in case of errors.
+    /// \return 1 if successful else 0
+    extern int bcm2835_init(void);
+
+bcm2835.go
+
+	func Init() (err error) {
+		/// Initialise the library by opening /dev/mem and getting pointers to the
+		/// ...
+		/// extern int bcm2835_init(void);
+		if C.bcm2835_init() == 0 {
+			return errors.New("Init: failed")
+		}
+		return
+	}
+
+* BCM2835 bridge - parameters
+
+bcm2835.h
+
+    /// Sets the SPI data mode
+    /// Sets the clock polariy and phase
+    /// \param[in] mode The desired data mode, one of BCM2835_SPI_MODE*, 
+    /// see \ref bcm2835SPIMode
+    extern void bcm2835_spi_setDataMode(uint8_t mode);
+    
+
+bcm2835.go
+
+	func SpiSetDataMode(mode uint8) {
+		/// Sets the SPI data mode
+		/// Sets the clock polariy and phase
+		/// \param[in] mode The desired data mode, one of BCM2835_SPI_MODE*,
+		/// see \ref bcm2835SPIMode
+		/// extern void bcm2835_spi_setDataMode(uint8_t mode);
+		C.bcm2835_spi_setDataMode(C.uint8_t(mode))
+	}
+
+* BCM2835 bridge - arrays
+
+bcm2835.h
+
+    /// Transfers any number of bytes to and from the currently selected SPI slave.
+    /// Asserts the currently selected CS pins (as previously set by bcm2835_spi_chipSelect) 
+    /// during the transfer.
+    /// Clocks the len 8 bit bytes out on MOSI, and simultaneously clocks in data from MISO. 
+    /// The data read read from the slave is placed into rbuf. rbuf must be at least len bytes long
+    /// Uses polled transfer as per section 10.6.1 of the BCM 2835 ARM Peripherls manual
+    /// \param[in] tbuf Buffer of bytes to send. 
+    /// \param[out] rbuf Received bytes will by put in this buffer
+    /// \param[in] len Number of bytes in the tbuf buffer, and the number of bytes to send/received
+    /// \sa bcm2835_spi_transfer()
+    extern void bcm2835_spi_transfernb(char* tbuf, char* rbuf, uint32_t len);
+
+bcm2835.go
+
+	func SpiTransfernb(tbuf []byte, rbuf []byte, len uint32) {
+		/// Transfers any number of bytes to and from the currently selected SPI slave.
+		/// ...
+		/// extern void bcm2835_spi_transfernb(char* tbuf, char* rbuf, uint32_t len);
+		rbufC := (*C.char)(unsafe.Pointer(&rbuf[0]))
+		tbufC := (*C.char)(unsafe.Pointer(&tbuf[0]))
+		C.bcm2835_spi_transfernb(tbufC, rbufC, C.uint32_t(len))
+	}
+
+* SPI Loop back
+.code BCM2835Bridge/BCM2835Bridge.go
+
+* Packages
+
+* Go code lives in packages.
+
+Packages contain type, function, variable, and constant declarations.
+
+	import (
+		// Standard library
+		"fmt"
+		"strconv"          // conversions to and from string representations of basic data types.
+		"time"             // provides functionality for measuring and displaying time.
+		"log"              // a simple logging package.
+		"net/http"         // provides HTTP client and server implementations.
+		"html/template"    // implements data-driven templates for generating HTML output safe.
+		"image/color"      // implements a basic color library.
+		// Go Libraries
+		"code.google.com/p/plotinum/plot"        // provides simple interface for laying out a plot   
+		"code.google.com/p/plotinum/plotter"     // provides a standard set of 'Plotters'
+		"code.google.com/p/plotinum/vg"          // provides a generic vector graphics API
+		"github.com/gorilla/Schema"              // fills a struct with form values.
+		// Ubikwa System Library
+		"dummy/ubiTC64P"                         // Sensor bridge
+	)
+
+* Applications and Services
+
+* Web Server
+
+	func main() {
+		// Enable ubiTC64P interface
+		enable := ubiTC64P.Enable()
+		if enable != 0 {
+			fmt.Println("ubiTC64P not available")
+			return
+		}
+		// Download the firmware
+		ubiTC64P.Download()
+		// defer ubiTC64P SPI interface
+		defer ubiTC64P.Close()
+		// Register the handler for the given pattern
+		http.Handle("/map/", http.HandlerFunc(GetMap))
+		http.Handle("/setup/", http.HandlerFunc(PostSetup))
+		http.Handle("/set/", http.HandlerFunc(SetSetup))
+		http.Handle("/", http.FileServer(http.Dir("./static")))
+		// Console feedback
+		fmt.Printf("ubiTC64P Web Server Ready")
+		// Start Server
+		http.ListenAndServe(":6060", nil)
+	}
+
+* RESTful Service
+
+	func main() {
+		// Start REST 
+		handler := rest.ResourceHandler{
+			EnableRelaxedContentType: true,
+		}
+		// Register the handler for the given pattern
+		handler.SetRoutes(
+			&rest.Route{"GET", "/raw", GetRawData},
+			&rest.Route{"GET", "/distance", GetDistance},
+			&rest.Route{"GET", "/temperature", GetTemperature},
+			&rest.Route{"GET", "/quality", GetQuality},
+			&rest.Route{"POST", "/setup", PostSetup},
+		)
+		// Console feedback
+		fmt.Println("ubiTC64PREST Server Ready")
+		// Start Service
+		http.ListenAndServe(":8080", &handler)
+	}
+
+* Demo
+
+* Application stack
+Two possible approaches:
+
+	- Go Application       Go Application     // Go application layer
+	- Go data handler      Go data handler    // Go data handler
+	- Go Bus bridge        Go data bridge     // C to Go Interface
+	-                      C data handler     // Sensor information handler
+	- C Bus Interface      C Bus Interface    // Hardware features management
+	- SPI sensor           SPI sensor         // The sensor
+
+* Expected Web Server
+
+.image image/ubiWebServerCapture.PNG _ 400
+
+
+* Expected RESTful
+
+.image image/LogoUbikwaBN.png _ 50
+.image image/ubiRESTfulCapture.PNG _ 800
+
+
+* References
+Programmers
+[[http://talks.golang.org/2012/goforc.slide#1][Go for C programmers]]
+[[http://talks.golang.org/2013/go4python.slide][Go for Pythonistas]]
+[[http://talks.golang.org/2014/go4java.slide][Go for Javaneros (Javaïstes?).]]
+[[http://talks.golang.org/2014/go4gophers.slide][Go for gophers.]]
+
+Documentation
+[[http://blog.golang.org/godoc-documenting-go-code][Gocode: documenting Go code]]
+
+Code
+[[https://drive.google.com/folderview?id=0B3JCCmjUE6SiQWo2Mk82T2FhWUk&usp=sharing][Go Raspberry Pi]]
