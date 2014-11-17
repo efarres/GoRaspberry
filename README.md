@@ -6,7 +6,7 @@ Presentation and code corresponding to
 ## Objective
 The objective of the presentation is describe how is possible take the control of the hardware peripherals of the broadcom BCM2835 SoC.
 
-BCM2835 is a bridge between Go and the bcm2835 C Library, a great C library, very well documented. 
+BCM2835 is a binding between Go and the bcm2835 C Library, a great C library, very well documented. 
 
 Library source is available at http://www.airspayce.com/mikem/bcm2835
 
