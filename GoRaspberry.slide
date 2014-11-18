@@ -82,9 +82,9 @@ Multiplatform, nice to see the code running in different platforms:
 - x86 (32/64bit), ARM (32bit) 
 - Windows, Linux, BSD, OS X, ...
 
-NO dependences.
+NO dependencies.
 
-Compiled 
+Compiled.
 
 Statically typed language.
 
@@ -149,33 +149,32 @@ We need:
 - Fast development cycle
 
 
-* Is possible build an embedded system with Go?
+* Is it possible to build an embedded system with Go?
 
-- Is possible manage bus interfaces? 
+- Is it possible to manage bus interfaces? 
 	SPI, I2C, I2S, UART common sensor interfaces
-- Is possible take profit of the hardware features?
+- Is it possible to take profit of the hardware features?
 	Speed, power budget.
-- Is possible re-use C libraries?
+- Is it possible to reuse C libraries?
 	C/C++ Bridges
-- Is possible run in an embedded system?
+- Is it possible to run in an embedded system?
 	Raspberry Pi as fast prototyping
 
-* Is possible build an embedded system with Go?
+* Is it possible to build an embedded system with Go?
 
-- Is possible manage communications?
+- Is it possible to manage communications?
 	WiFi, Ethernet, UART
-- Is possible deploy web services?
+- Is it possible to deploy web services?
 	native net/http package
-- Is possible build RESTfull APIs?
+- Is it possible to build RESTful APIs?
 	go-json-rest package
 	
 * cgo - C "Pseudo-package"
 Cgo lets Go packages call C code.
 Go and C files that can be combined into a single Go package.
-[[http://blog.golang.org/c-go-cgo][C? Go? Cgo!]]
+[[http://blog.golang.org/c-go-cgo][c + go = cgo]]
 
 .code random/random.go
-
 
 * Raspberry Pi
 
@@ -227,10 +226,12 @@ bcm2835.go
 	
 	/// \brief SPI Data mode
 	/// Specify the SPI data mode to be passed to bcm2835_spi_setDataMode()
-	const BCM2835_SPI_MODE0 = uint8(0) ///< CPOL = 0, CPHA = 0
-	const BCM2835_SPI_MODE1 = uint8(1) ///< CPOL = 0, CPHA = 1
-	const BCM2835_SPI_MODE2 = uint8(2) ///< CPOL = 1, CPHA = 0
-	const BCM2835_SPI_MODE3 = uint8(3) ///< CPOL = 1, CPHA = 1	
+	const (
+		BCM2835_SPI_MODE0 uint8 = iota ///< CPOL = 0, CPHA = 0
+		BCM2835_SPI_MODE1              ///< CPOL = 0, CPHA = 1
+		BCM2835_SPI_MODE2              ///< CPOL = 1, CPHA = 0
+		BCM2835_SPI_MODE3              ///< CPOL = 1, CPHA = 1
+	)
 
 * BCM2835 bridge functions
 
@@ -248,14 +249,14 @@ bcm2835.h
 
 bcm2835.go
 
-	func Init() (err error) {
+	func Init() error {
 		/// Initialise the library by opening /dev/mem and getting pointers to the
 		/// ...
 		/// extern int bcm2835_init(void);
 		if C.bcm2835_init() == 0 {
 			return errors.New("Init: failed")
 		}
-		return
+		return nil
 	}
 
 * BCM2835 bridge - parameters
@@ -308,7 +309,12 @@ bcm2835.go
 	}
 
 * SPI Loop back
-.code BCM2835Bridge/BCM2835Bridge.go
+
+.code BCM2835Bridge/BCM2835Bridge.go ,/SPLIT/
+
+* SPI Loop back (cont.)
+
+.code BCM2835Bridge/BCM2835Bridge.go /SPLIT/,
 
 * Packages
 
@@ -319,19 +325,21 @@ Packages contain type, function, variable, and constant declarations.
 	import (
 		// Standard library
 		"fmt"
-		"strconv"          // conversions to and from string representations of basic data types.
-		"time"             // provides functionality for measuring and displaying time.
-		"log"              // a simple logging package.
-		"net/http"         // provides HTTP client and server implementations.
-		"html/template"    // implements data-driven templates for generating HTML output safe.
-		"image/color"      // implements a basic color library.
+		"html/template" // implements data-driven templates for generating HTML output safe.
+		"image/color"   // implements a basic color library.
+		"log"           // a simple logging package.
+		"net/http"      // provides HTTP client and server implementations.
+		"strconv"       // conversions to and from string representations of basic data types.
+		"time"          // provides functionality for measuring and displaying time.
+
 		// Go Libraries
-		"code.google.com/p/plotinum/plot"        // provides simple interface for laying out a plot   
-		"code.google.com/p/plotinum/plotter"     // provides a standard set of 'Plotters'
-		"code.google.com/p/plotinum/vg"          // provides a generic vector graphics API
-		"github.com/gorilla/Schema"              // fills a struct with form values.
+		"code.google.com/p/plotinum/plot"    // provides simple interface for laying out a plot
+		"code.google.com/p/plotinum/plotter" // provides a standard set of 'Plotters'
+		"code.google.com/p/plotinum/vg"      // provides a generic vector graphics API
+		"github.com/gorilla/schema"          // fills a struct with form values.
+
 		// Ubikwa System Library
-		"dummy/ubiTC64P"                         // Sensor bridge
+		"dummy/ubiTC64P" // Sensor bridge
 	)
 
 * Applications and Services
@@ -340,33 +348,35 @@ Packages contain type, function, variable, and constant declarations.
 
 	func main() {
 		// Enable ubiTC64P interface
-		enable := ubiTC64P.Enable()
-		if enable != 0 {
-			fmt.Println("ubiTC64P not available")
-			return
+		if ubiTC64P.Enable() != 0 {
+			log.Fatal("ubiTC64P not available")
 		}
-		// Download the firmware
+
+		// Download the firmware and close it later
 		ubiTC64P.Download()
-		// defer ubiTC64P SPI interface
 		defer ubiTC64P.Close()
+
 		// Register the handler for the given pattern
 		http.Handle("/map/", http.HandlerFunc(GetMap))
 		http.Handle("/setup/", http.HandlerFunc(PostSetup))
 		http.Handle("/set/", http.HandlerFunc(SetSetup))
 		http.Handle("/", http.FileServer(http.Dir("./static")))
+
 		// Console feedback
 		fmt.Printf("ubiTC64P Web Server Ready")
+
 		// Start Server
-		http.ListenAndServe(":6060", nil)
+		if err := http.ListenAndServe(":6060", nil); err != nil {
+			log.Fatal(err)
+		}
 	}
 
 * RESTful Service
 
 	func main() {
-		// Start REST 
-		handler := rest.ResourceHandler{
-			EnableRelaxedContentType: true,
-		}
+		// Start REST
+		handler := rest.ResourceHandler{EnableRelaxedContentType: true}
+
 		// Register the handler for the given pattern
 		handler.SetRoutes(
 			&rest.Route{"GET", "/raw", GetRawData},
@@ -375,10 +385,14 @@ Packages contain type, function, variable, and constant declarations.
 			&rest.Route{"GET", "/quality", GetQuality},
 			&rest.Route{"POST", "/setup", PostSetup},
 		)
+
 		// Console feedback
 		fmt.Println("ubiTC64PREST Server Ready")
+
 		// Start Service
-		http.ListenAndServe(":8080", &handler)
+		if err := http.ListenAndServe(":8080", &handler); err != nil {
+			log.Fatal(err)
+		}
 	}
 
 * Demo
