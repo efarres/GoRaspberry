@@ -373,6 +373,8 @@ Packages contain type, function, variable, and constant declarations.
 
 * RESTful Service
 
+Package "github.com/ant0ine/go-json-rest" A quick and easy way to setup a RESTful JSON API
+ 
 	func main() {
 		// Start REST
 		handler := rest.ResourceHandler{EnableRelaxedContentType: true}
@@ -429,4 +431,4 @@ Documentation
 [[http://blog.golang.org/godoc-documenting-go-code][Gocode: documenting Go code]]
 
 Code
-[[https://drive.google.com/folderview?id=0B3JCCmjUE6SiQWo2Mk82T2FhWUk&usp=sharing][Go Raspberry Pi]]
+[[https://github.com/efarres/GoRaspberry][Go Raspberry Pi]]
