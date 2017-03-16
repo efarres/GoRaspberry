@@ -15,7 +15,7 @@ C and C++ support for Broadcom BCM 2835 as used in Raspberry Pi projects.
 Author: *Mike McCauley*
 
 ## Presentation online
-"Go and Raspberries" slides are stored in the [preset format](https://godoc.org/golang.org/x/tools/present), you can see the presentation online at [Go and Raspberries](http://go-talks.appspot.com/efarres/GoRaspberry/GoRaspberry.slide)
+"Go and Raspberries" slides are stored in the [preset format](https://godoc.org/golang.org/x/tools/present), you can see the presentation online at [Go and Raspberries](http://go-talks.appspot.com/github.com/efarres/GoRaspberry/GoRaspberry.slide)
 
 ## bcm2835 library
 It provides access to GPIO and other IO functions on the Broadcom BCM2835 chip.
